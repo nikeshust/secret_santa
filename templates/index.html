@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🎄 Secret Christmas Friend Picker 🎁</title>
+<style>
+    body {
+        font-family: "Segoe UI", sans-serif;
+        text-align: center;
+        background: linear-gradient(#b30000, #4d0000);
+        color: white;
+        padding: 20px;
+        overflow: hidden;
+    }
+    h1 {
+        font-size: 45px;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 5px black;
+    }
+    .card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(8px);
+        padding: 30px;
+        border-radius: 15px;
+        width: 350px;
+        margin: auto;
+        box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+    input {
+        width: 80%;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        margin-top: 10px;
+        font-size: 18px;
+    }
+    button {
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 20px;
+        background: #00cc66;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    button:hover {
+        background: #00994d;
+    }
+    #resultBox {
+        margin-top: 20px;
+        font-size: 24px;
+        background: rgba(0,0,0,0.3);
+        padding: 15px;
+        border-radius: 10px;
+        display: none;
+        animation: fadeIn 0.8s;
+    }
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+    .snowflake {
+        position: fixed;
+        top: -10px;
+        color: white;
+        font-size: 20px;
+        animation: fall linear infinite;
+    }
+    @keyframes fall {
+        0% {transform: translateY(-10vh);}
+        100% {transform: translateY(110vh);}
+    }
+</style>
+</head>
+<body>
+
+<h1>🎅 Secret Christmas Friend 🎄</h1>
+
+<div class="card">
+    <p>Enter your name and click the button to see your Christmas friend!</p>
+
+    <input id="username" placeholder="Your Name">
+
+    <button onclick="showFriend()">🎁 Reveal My Christmas Friend</button>
+
+    <div id="resultBox"></div>
+</div>
+
+<script>
+// Snow effect
+function createSnowflakes() {
+    for (let i = 0; i < 40; i++) {
+        let snow = document.createElement("div");
+        snow.className = "snowflake";
+        snow.innerHTML = "❄";
+        snow.style.left = Math.random() * 100 + "vw";
+        snow.style.animationDuration = 4 + Math.random() * 6 + "s";
+        snow.style.opacity = Math.random();
+        document.body.appendChild(snow);
+    }
+}
+createSnowflakes();
+
+async function showFriend() {
+    const name = document.getElementById("username").value.trim();
+    const box = document.getElementById("resultBox");
+
+    if (!name) {
+        box.style.display = "block";
+        box.innerHTML = "🎄 Please enter your name!";
+        return;
+    }
+
+    const res = await fetch(`/friend/${name}`);
+    const data = await res.json();
+
+    box.style.display = "block";
+
+    if (!res.ok) {
+        box.innerHTML = `⚠️ ${data.detail}`;
+        return;
+    }
+
+    box.innerHTML = `🎁 <strong>${name}</strong>, your Christmas friend is:<br><br>
+                     🌟 <strong>${data.friend}</strong> 🌟`;
+}
+</script>
+
+</body>
+</html>
